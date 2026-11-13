@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎮 Game Asset Forge V10</title>
+<!-- Thư viện tạo file GIF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
+<style>
+:root {
+  --bg: #0f1117; --panel: #1a1d27; --panel-2: #232733; --border: #2d3142;
+  --text: #e4e6eb; --text-dim: #8b90a0; --accent: #7c5cff; --accent-2: #00d4aa;
+  --accent-3: #ff6b6b; --success: #22c55e; --warning: #f59e0b;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+header { padding: 20px 24px; border-bottom: 1px solid var(--border); background: var(--panel); text-align: center; }
+h1 { font-size: 22px; font-weight: 800; background: linear-gradient(135deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+header p { font-size: 13px; color: var(--text-dim); margin-top: 4px; }
+.tabs { display: flex; gap: 8px; padding: 16px 24px; border-bottom: 1px solid var(--border); background: var(--panel); overflow-x: auto; }
+.tab-btn { padding: 10px 18px; background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px; color: var(--text-dim); cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.2s; white-space: nowrap; font-family: inherit; }
+.tab-btn:hover { color: var(--text); border-color: var(--accent); }
+.tab-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+main { flex: 1; padding: 24px; max-width: 1000px; width: 100%; margin: 0 auto; }
+.tab-content { display: none; }
+.tab-content.active { display: block; animation: fadeIn 0.3s; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.form-group { margin-bottom: 16px; }
+label { display: block; margin-bottom: 6px; font-size: 13px; color: var(--text-dim); font-weight: 600; }
+input, select, textarea { width: 100%; padding: 10px 12px; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 14px; font-family: inherit; }
+textarea { resize: vertical; min-height: 80px; }
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+@media (max-width: 768px) { .row, .row-3 { grid-template-columns: 1fr; } main { padding: 16px; } }
+button.primary { padding: 12px 24px; background: var(--accent); color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; width: 100%; font-family: inherit; }
+button.primary:hover:not(:disabled) { background: #6a4dff; transform: translateY(-1px); }
+button.primary:disabled { opacity: 0.5; cursor: not-allowed; }
+button.secondary { padding: 10px 16px; background: var(--panel-2); color: var(--text); border: 1px solid var(--border); border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.2s; font-family: inherit; }
+button.secondary:hover { border-color: var(--accent); }
+button.download { padding: 10px 20px; background: var(--accent-2); color: #0f1117; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 14px; font-family: inherit; transition: all 0.2s; margin-top: 10px; }
+button.download:hover { filter: brightness(1.1); }
+.preview { margin-top: 20px; padding: 20px; background: var(--panel); border: 1px solid var(--border); border-radius: 12px; min-height: 220px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 16px; text-align: center; }
+.preview img { max-width: 100%; max-height: 400px; border-radius: 8px; }
+.preview-empty { color: var(--text-dim); font-size: 14px; }
+.note { padding: 12px 16px; background: rgba(124, 92, 255, 0.1); border-left: 3px solid var(--accent); border-radius: 6px; font-size: 13px; color: var(--text-dim); margin-bottom: 16px; line-height: 1.5; }
+.spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 10px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+canvas { border-radius: 8px; border: 1px solid var(--border); background: repeating-conic-gradient(#1a1d27 0% 25%, #232733 0% 50%) 50% / 20px 20px; }
+.anim-canvas { width: 128px; height: 128px; image-rendering: pixelated; }
+.sheet-canvas { width: 100%; max-width: 100%; height: auto; image-rendering: pixelated; }
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--panel-2); border: 1px solid var(--border); padding: 12px 20px; border-radius: 10px; font-size: 14px; transition: transform 0.3s; z-index: 1000; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.success { border-color: var(--success); }
+.toast.error { border-color: var(--accent-3); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎮 Game Asset Forge V10</h1>
+  <p>Bộ công cụ sản xuất tài nguyên Game (AI & Slicer)</p>
+</header>
+
+<nav class="tabs">
+  <button class="tab-btn active" data-tab="image">🖼️ Tạo Ảnh AI</button>
+  <button class="tab-btn" data-tab="anim">🎬 Animation Studio</button>
+  <button class="tab-btn" data-tab="sound">🎵 Tạo Âm thanh</button>
+</nav>
+
+<main>
+
+<!-- ============ TAB 1: TẠO ẢNH AI ============ -->
+<section id="tab-image" class="tab-content active">
+  <div class="note">
+    ⚠️ <strong>Mẹo:</strong> Để tạo Sprite Sheet cho Animation, hãy yêu cầu AI vẽ nhiều khung hình (vd: <em>"knight walking, 4 frames sprite sheet, side view"</em>). Dùng Pollinations.ai (1 ảnh/15s).
+  </div>
+  <div class="form-group">
+    <label>Mô tả chủ thể (Ví dụ: pixel art knight walking, 4 frames sprite sheet)</label>
+    <textarea id="img-prompt" placeholder="Mô tả bằng tiếng Anh...">pixel art knight walking sprite sheet, 4 frames, side view, white background</textarea>
+  </div>
+  <div class="row-3">
+    <div class="form-group">
+      <label>Góc nhìn</label>
+      <select id="img-perspective">
+        <option value="side view profile">Side View (Platformer)</option>
+        <option value="top-down view">Top-down (RPG)</option>
+        <option value="isometric view">Isometric (45 độ)</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Phong cách</label>
+      <select id="img-style">
+        <option value="pixel art, 16-bit">Pixel Art 16-bit</option>
+        <option value="pixel art, 8-bit">Pixel Art 8-bit</option>
+        <option value="2d game asset, vector art">2D Vector</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>&nbsp;</label>
+      <button class="primary" id="img-generate">🎨 Tạo Ảnh</button>
+    </div>
+  </div>
+  <div class="preview" id="img-preview">
+    <div class="preview-empty">Nhập mô tả và bấm "Tạo Ảnh"</div>
+  </div>
+</section>
+
+<!-- ============ TAB 2: ANIMATION STUDIO ============ -->
+<section id="tab-anim" class="tab-content">
+  <div class="note success">
+    🎬 <strong>Animation Studio:</strong> Tải lên một ảnh chứa nhiều khung hình nằm ngang. App sẽ tự động cắt, xóa nền trắng và tạo file GIF chuyển động.
+  </div>
+  
+  <div class="form-group">
+    <label>1. Tải lên Sprite Sheet (Ảnh có nền trắng)</label>
+    <input type="file" id="anim-file" accept="image/*">
+  </div>
+  
+  <div class="row">
+    <div class="form-group">
+      <label>Số khung hình (Frames)</label>
+      <input type="number" id="anim-frames" value="4" min="2" max="16">
+    </div>
+    <div class="form-group">
+      <label>Tốc độ (FPS)</label>
+      <input type="number" id="anim-fps" value="8" min="1" max="24">
+    </div>
+  </div>
+  
+  <button class="primary" id="anim-process">✂️ Cắt & Xem Trước</button>
+
+  <div class="preview" id="anim-result" style="display: none;">
+    <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
+      <div>
+        <p style="font-size:12px; margin-bottom:8px; color:var(--text-dim);">Live Preview</p>
+        <canvas id="anim-preview-canvas" class="anim-canvas" width="128" height="128"></canvas>
+      </div>
+      <div style="flex: 1; min-width: 200px;">
+        <p style="font-size:12px; margin-bottom:8px; color:var(--text-dim);">Sprite Sheet Gốc (Đã xóa nền)</p>
+        <canvas id="anim-sheet-canvas" class="sheet-canvas"></canvas>
+      </div>
+    </div>
+    <button class="download" id="anim-download">📥 Tải File GIF Animation</button>
+  </div>
+</section>
+
+<!-- ============ TAB 3: ÂM THANH ============ -->
+<section id="tab-sound" class="tab-content">
+  <div class="note">
+    🎵 Tạo hiệu ứng âm thanh bằng <strong>Web Audio API</strong> — miễn phí, không giới hạn, xuất file WAV.
+  </div>
+  <div class="row">
+    <div class="form-group">
+      <label>Loại âm thanh</label>
+      <select id="snd-type">
+        <option value="jump">🦘 Nhảy (Jump)</option>
+        <option value="coin">🪙 Nhặt xu (Coin)</option>
+        <option value="explosion">💥 Nổ (Explosion)</option>
+        <option value="laser">🔫 Bắn Laser (Laser)</option>
+        <option value="powerup">⭐ Nâng cấp (Power-up)</option>
+        <option value="hit">👊 Trúng đòn (Hit)</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Tần số gốc (Hz)</label>
+      <input type="number" id="snd-freq" value="440" min="80" max="2000">
+    </div>
+  </div>
+  <div class="row">
+    <div class="form-group">
+      <label>Thời lượng (giây)</label>
+      <input type="number" id="snd-duration" value="0.3" min="0.05" max="2" step="0.05">
+    </div>
+    <div class="form-group">
+      <label>&nbsp;</label>
+      <button class="primary" id="snd-generate">🎵 Tạo & Nghe thử</button>
+    </div>
+  </div>
+  <div class="preview" id="snd-preview">
+    <div class="preview-empty">Chọn loại âm thanh và bấm "Tạo"</div>
+  </div>
+</section>
+
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+function $(id) { return document.getElementById(id); }
+function showToast(msg, type = '') {
+  const t = $('toast'); t.textContent = msg; t.className = 'toast show ' + type;
+  clearTimeout(t._timer); t._timer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// Chuyển Tab
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active'); $('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ============================================================
+// TAB 1: AI IMAGE GENERATION
+// ============================================================
+let imgCooldownUntil = 0;
+function updateImageBtn() {
+  const btn = $('img-generate'); const now = Date.now();
+  if (now < imgCooldownUntil) {
+    const remaining = Math.ceil((imgCooldownUntil - now) / 1000);
+    btn.disabled = true; btn.textContent = `⏳ Chờ ${remaining}s...`;
+    setTimeout(updateImageBtn, 500);
+  } else { btn.disabled = false; btn.textContent = '🎨 Tạo Ảnh'; }
+}
+
+async function generateImage() {
+  const prompt = $('img-prompt').value.trim();
+  if (!prompt) { showToast('Nhập mô tả trước đã!', 'error'); return; }
+  const perspective = $('img-perspective').value;
+  const style = $('img-style').value;
+  const styleLock = `game asset, isolated on solid white background, high quality`;
+  const fullPrompt = `${prompt}, ${perspective}, ${style}, ${styleLock}`;
+  const seed = Math.floor(Math.random() * 1000000);
+  const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(fullPrompt)}?width=512&height=512&seed=${seed}&nologo=true&model=flux`;
+  
+  imgCooldownUntil = Date.now() + 15000; updateImageBtn();
+  const preview = $('img-preview');
+  preview.innerHTML = '<div class="spinner"></div><div class="preview-empty">Đang tạo ảnh...</div>';
+  
+  const img = new Image(); img.crossOrigin = 'anonymous';
+  img.onload = () => {
+    preview.innerHTML = ''; img.style.maxWidth = '100%'; img.style.borderRadius = '8px'; preview.appendChild(img);
+    const btn = document.createElement('button'); btn.className = 'download'; btn.textContent = '📥 Tải ảnh';
+    btn.onclick = () => { const a = document.createElement('a'); a.href = url; a.download = `asset-${Date.now()}.png`; a.click(); };
+    preview.appendChild(btn); showToast('Tạo ảnh thành công!', 'success');
+  };
+  img.onerror = () => { preview.innerHTML = '<div class="preview-empty" style="color:var(--accent-3)">❌ Lỗi API. Thử lại sau.</div>'; };
+  img.src = url;
+}
+$('img-generate').addEventListener('click', generateImage);
+updateImageBtn();
+
+// ============================================================
+// TAB 2: ANIMATION STUDIO
+// ============================================================
+let animFrames = [];
+let animInterval = null;
+let origImg = new Image();
+
+$('anim-file').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(event) {
+    origImg.src = event.target.result;
+  };
+  reader.readAsDataURL(file);
+});
+
+$('anim-process').addEventListener('click', () => {
+  if (!origImg.src) { showToast('Vui lòng chọn ảnh!', 'error'); return; }
+  
+  const frameCount = parseInt($('anim-frames').value);
+  const tempCanvas = document.createElement('canvas');
+  tempCanvas.width = origImg.width; tempCanvas.height = origImg.height;
+  const tempCtx = tempCanvas.getContext('2d');
+  tempCtx.drawImage(origImg, 0, 0);
+  
+  // Xóa nền trắng (Chroma Key)
+  const imgData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+  for (let i = 0; i < imgData.data.length; i += 4) {
+    if (imgData.data[i] > 240 && imgData.data[i+1] > 240 && imgData.data[i+2] > 240) {
+      imgData.data[i+3] = 0; // Alpha = 0
+    }
+  }
+  tempCtx.putImageData(imgData, 0, 0);
+
+  // Hiển thị Sprite Sheet gốc
+  const sheetCanvas = $('anim-sheet-canvas');
+  sheetCanvas.width = tempCanvas.width; sheetCanvas.height = tempCanvas.height;
+  sheetCanvas.getContext('2d').drawImage(tempCanvas, 0, 0);
+
+  // Cắt thành các Frame
+  const frameWidth = tempCanvas.width / frameCount;
+  const frameHeight = tempCanvas.height;
+  animFrames = [];
+  
+  for (let i = 0; i < frameCount; i++) {
+    const frameCanvas = document.createElement('canvas');
+    frameCanvas.width = frameWidth; frameCanvas.height = frameHeight;
+    frameCanvas.getContext('2d').drawImage(
+      tempCanvas, 
+      i * frameWidth, 0, frameWidth, frameHeight, 
+      0, 0, frameWidth, frameHeight
+    );
+    animFrames.push(frameCanvas);
+  }
+
+  $('anim-result').style.display = 'block';
+  startAnimPreview();
+  showToast('Đã cắt Sprite Sheet!', 'success');
+});
+
+function startAnimPreview() {
+  if (animInterval) clearInterval(animInterval);
+  const canvas = $('anim-preview-canvas'); const ctx = canvas.getContext('2d');
+  const fps = parseInt($('anim-fps').value);
+  let currentFrame = 0;
+  
+  canvas.width = animFrames[0].width; canvas.height = animFrames[0].height;
+  
+  animInterval = setInterval(() => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(animFrames[currentFrame], 0, 0);
+    currentFrame = (currentFrame + 1) % animFrames.length;
+  }, 1000 / fps);
+}
+
+$('anim-download').addEventListener('click', () => {
+  if (animFrames.length === 0) return;
+  const fps = parseInt($('anim-fps').value);
+  const delay = 1000 / fps;
+  
+  const gif = new GIF({
+    workers: 2, quality: 10, width: animFrames[0].width, height: animFrames[0].height,
+    workerScript: 'https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js'
+  });
+
+  animFrames.forEach(frame => gif.addFrame(frame, {delay: delay}));
+
+  gif.on('finished', function(blob) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = `animation-${Date.now()}.gif`; a.click();
+  });
+  gif.render();
+  showToast('Đang xử lý file GIF...', 'success');
+});
+
+// ============================================================
+// TAB 3: SOUND GENERATION
+// ============================================================
+let currentSoundSamples = null; let currentSampleRate = 44100;
+
+function generateSoundSamples(type, sampleRate, duration, baseFreq) {
+  const length = Math.floor(sampleRate * duration); const data = new Float32Array(length);
+  for (let i = 0; i < length; i++) {
+    const time = i / sampleRate; const progress = i / length; let sample = 0;
+    switch (type) {
+      case 'jump': sample = Math.sin(2 * Math.PI * (baseFreq + baseFreq * 3 * progress) * time) * (1 - progress) * 0.5; break;
+      case 'coin': sample = Math.sign(Math.sin(2 * Math.PI * (progress < 0.4 ? baseFreq * 2 : baseFreq * 2.67) * time)) * 0.3 * (1 - progress); break;
+      case 'explosion': sample = (Math.random() * 2 - 1) * Math.pow(1 - progress, 2) * 0.7; break;
+      case 'laser': sample = Math.sin(2 * Math.PI * (baseFreq * 3 * (1 - progress) + 100) * time) * (1 - progress) * 0.4; break;
+      case 'powerup': const notes = [1, 1.25, 1.5, 2]; sample = Math.sign(Math.sin(2 * Math.PI * (baseFreq * notes[Math.min(Math.floor(progress * 4), 3)]) * time)) * 0.25 * (1 - progress * 0.5); break;
+      case 'hit': sample = ((Math.random() * 2 - 1) * 0.6 + Math.sin(2 * Math.PI * baseFreq * 0.5 * time) * 0.4) * Math.pow(1 - progress, 1.5); break;
+    }
+    const fadeOut = Math.min(1, (length - i) / (sampleRate * 0.01));
+    data[i] = Math.max(-1, Math.min(1, sample * fadeOut));
+  }
+  return data;
+}
+
+function encodeWAV(samples, sampleRate) {
+  const buffer = new ArrayBuffer(44 + samples.length * 2); const view = new DataView(buffer);
+  const w = (off, str) => { for (let i = 0; i < str.length; i++) view.setUint8(off + i, str.charCodeAt(i)); };
+  w(0, 'RIFF'); view.setUint32(4, 36 + samples.length * 2, true); w(8, 'WAVE'); w(12, 'fmt ');
+  view.setUint32(16, 16, true); view.setUint16(20, 1, true); view.setUint16(22, 1, true);
+  view.setUint32(24, sampleRate, true); view.setUint32(28, sampleRate * 2, true);
+  view.setUint16(32, 2, true); view.setUint16(34, 16, true); w(36, 'data'); view.setUint32(40, samples.length * 2, true);
+  let off = 44;
+  for (let i = 0; i < samples.length; i++) { const s = Math.max(-1, Math.min(1, samples[i])); view.setInt16(off, s < 0 ? s * 0x8000 : s * 0x7FFF, true); off += 2; }
+  return new Blob([buffer], { type: 'audio/wav' });
+}
+
+async function playSound(samples, sampleRate) {
+  const ctx = new (window.AudioContext || window.webkitAudioContext)(); const buffer = ctx.createBuffer(1, samples.length, sampleRate);
+  buffer.getChannelData(0).set(samples); const src = ctx.createBufferSource(); src.buffer = buffer; src.connect(ctx.destination); src.start();
+  return new Promise(res => { src.onended = () => { ctx.close(); res(); }; });
+}
+
+async function generateSound() {
+  const type = $('snd-type').value; const freq = parseInt($('snd-freq').value) || 440; const duration = parseFloat($('snd-duration').value) || 0.3;
+  currentSampleRate = 44100; currentSoundSamples = generateSoundSamples(type, currentSampleRate, duration, freq);
+  const preview = $('snd-preview'); preview.innerHTML = '';
+  const btnRow = document.createElement('div'); btnRow.style.cssText = 'display:flex;gap:8px;margin-top:10px;';
+  const playBtn = document.createElement('button'); playBtn.className = 'secondary'; playBtn.textContent = '▶️ Nghe lại'; playBtn.onclick = () => playSound(currentSoundSamples, currentSampleRate); btnRow.appendChild(playBtn);
+  const dlBtn = document.createElement('button'); dlBtn.className = 'download'; dlBtn.textContent = '📥 Tải WAV';
+  dlBtn.onclick = () => { const blob = encodeWAV(currentSoundSamples, currentSampleRate); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `${type}.wav`; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); };
+  btnRow.appendChild(dlBtn); preview.appendChild(btnRow);
+  try { await playSound(currentSoundSamples, currentSampleRate); } catch (e) {}
+}
+$('snd-generate').addEventListener('click', generateSound);
+</script>
+</body>
+</html>
