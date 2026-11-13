@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🎮 Game Asset Forge V10</title>
+<title>🎮 Game Asset Forge V12</title>
 <!-- Thư viện tạo file GIF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
 <style>
 :root {
   --bg: #0f1117; --panel: #1a1d27; --panel-2: #232733; --border: #2d3142;
   --text: #e4e6eb; --text-dim: #8b90a0; --accent: #7c5cff; --accent-2: #00d4aa;
-  --accent-3: #ff6b6b; --success: #22c55e; --warning: #f59e0b;
+  --accent-3: #ff6b6b; --success: #22c55e;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
@@ -21,7 +21,7 @@ header p { font-size: 13px; color: var(--text-dim); margin-top: 4px; }
 .tab-btn { padding: 10px 18px; background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px; color: var(--text-dim); cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.2s; white-space: nowrap; font-family: inherit; }
 .tab-btn:hover { color: var(--text); border-color: var(--accent); }
 .tab-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
-main { flex: 1; padding: 24px; max-width: 1000px; width: 100%; margin: 0 auto; }
+main { flex: 1; padding: 24px; max-width: 900px; width: 100%; margin: 0 auto; }
 .tab-content { display: none; }
 .tab-content.active { display: block; animation: fadeIn 0.3s; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
@@ -49,34 +49,30 @@ button.download:hover { filter: brightness(1.1); }
 canvas { border-radius: 8px; border: 1px solid var(--border); background: repeating-conic-gradient(#1a1d27 0% 25%, #232733 0% 50%) 50% / 20px 20px; }
 .anim-canvas { width: 128px; height: 128px; image-rendering: pixelated; }
 .sheet-canvas { width: 100%; max-width: 100%; height: auto; image-rendering: pixelated; }
-.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--panel-2); border: 1px solid var(--border); padding: 12px 20px; border-radius: 10px; font-size: 14px; transition: transform 0.3s; z-index: 1000; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
-.toast.show { transform: translateX(-50%) translateY(0); }
-.toast.success { border-color: var(--success); }
-.toast.error { border-color: var(--accent-3); }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>🎮 Game Asset Forge V10</h1>
-  <p>Bộ công cụ sản xuất tài nguyên Game (AI & Slicer)</p>
+  <h1>🎮 Game Asset Forge V12</h1>
+  <p>AI tạo ảnh Game & Công cụ cắt Sprite Animation</p>
 </header>
 
 <nav class="tabs">
   <button class="tab-btn active" data-tab="image">🖼️ Tạo Ảnh AI</button>
-  <button class="tab-btn" data-tab="anim">🎬 Animation Studio</button>
+  <button class="tab-btn" data-tab="anim">🎬 Cắt & Tạo Animation</button>
   <button class="tab-btn" data-tab="sound">🎵 Tạo Âm thanh</button>
 </nav>
 
 <main>
 
-<!-- ============ TAB 1: TẠO ẢNH AI ============ -->
+<!-- ============ TAB 1: AI IMAGE GEN ============ -->
 <section id="tab-image" class="tab-content active">
   <div class="note">
-    ⚠️ <strong>Mẹo:</strong> Để tạo Sprite Sheet cho Animation, hãy yêu cầu AI vẽ nhiều khung hình (vd: <em>"knight walking, 4 frames sprite sheet, side view"</em>). Dùng Pollinations.ai (1 ảnh/15s).
+    ⚠️ <strong>Lưu ý:</strong> Pollinations.ai giới hạn <strong>1 ảnh mỗi 45 giây</strong>. Nút bấm sẽ tự động đếm ngược để bạn không bị lỗi "Limit reached". Để tạo animation, hãy yêu cầu AI vẽ nhiều khung hình (vd: <em>"knight walking, 4 frames sprite sheet, side view, white background"</em>).
   </div>
   <div class="form-group">
-    <label>Mô tả chủ thể (Ví dụ: pixel art knight walking, 4 frames sprite sheet)</label>
+    <label>Mô tả chủ thể (Tiếng Anh)</label>
     <textarea id="img-prompt" placeholder="Mô tả bằng tiếng Anh...">pixel art knight walking sprite sheet, 4 frames, side view, white background</textarea>
   </div>
   <div class="row-3">
@@ -108,12 +104,12 @@ canvas { border-radius: 8px; border: 1px solid var(--border); background: repeat
 
 <!-- ============ TAB 2: ANIMATION STUDIO ============ -->
 <section id="tab-anim" class="tab-content">
-  <div class="note success">
-    🎬 <strong>Animation Studio:</strong> Tải lên một ảnh chứa nhiều khung hình nằm ngang. App sẽ tự động cắt, xóa nền trắng và tạo file GIF chuyển động.
+  <div class="note">
+    🎬 <strong>Animation Studio:</strong> Tải lên một ảnh (từ AI hoặc từ mạng). App sẽ tự động xóa nền trắng, cắt thành từng frame và ghép thành file GIF chuyển động mượt mà.
   </div>
   
   <div class="form-group">
-    <label>1. Tải lên Sprite Sheet (Ảnh có nền trắng)</label>
+    <label>1. Tải lên Sprite Sheet</label>
     <input type="file" id="anim-file" accept="image/*">
   </div>
   
@@ -131,13 +127,13 @@ canvas { border-radius: 8px; border: 1px solid var(--border); background: repeat
   <button class="primary" id="anim-process">✂️ Cắt & Xem Trước</button>
 
   <div class="preview" id="anim-result" style="display: none;">
-    <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
+    <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; width: 100%;">
       <div>
         <p style="font-size:12px; margin-bottom:8px; color:var(--text-dim);">Live Preview</p>
         <canvas id="anim-preview-canvas" class="anim-canvas" width="128" height="128"></canvas>
       </div>
       <div style="flex: 1; min-width: 200px;">
-        <p style="font-size:12px; margin-bottom:8px; color:var(--text-dim);">Sprite Sheet Gốc (Đã xóa nền)</p>
+        <p style="font-size:12px; margin-bottom:8px; color:var(--text-dim);">Sprite Sheet Gốc</p>
         <canvas id="anim-sheet-canvas" class="sheet-canvas"></canvas>
       </div>
     </div>
@@ -148,7 +144,7 @@ canvas { border-radius: 8px; border: 1px solid var(--border); background: repeat
 <!-- ============ TAB 3: ÂM THANH ============ -->
 <section id="tab-sound" class="tab-content">
   <div class="note">
-    🎵 Tạo hiệu ứng âm thanh bằng <strong>Web Audio API</strong> — miễn phí, không giới hạn, xuất file WAV.
+    🎵 Tạo hiệu ứng âm thanh bằng <strong>Web Audio API</strong> — miễn phí, không giới hạn.
   </div>
   <div class="row">
     <div class="form-group">
@@ -183,14 +179,9 @@ canvas { border-radius: 8px; border: 1px solid var(--border); background: repeat
 </section>
 
 </main>
-<div class="toast" id="toast"></div>
 
 <script>
 function $(id) { return document.getElementById(id); }
-function showToast(msg, type = '') {
-  const t = $('toast'); t.textContent = msg; t.className = 'toast show ' + type;
-  clearTimeout(t._timer); t._timer = setTimeout(() => t.classList.remove('show'), 2500);
-}
 
 // Chuyển Tab
 document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -202,44 +193,71 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 });
 
 // ============================================================
-// TAB 1: AI IMAGE GENERATION
+// TAB 1: AI IMAGE GENERATION (Có Cooldown 45s)
 // ============================================================
 let imgCooldownUntil = 0;
 function updateImageBtn() {
   const btn = $('img-generate'); const now = Date.now();
   if (now < imgCooldownUntil) {
     const remaining = Math.ceil((imgCooldownUntil - now) / 1000);
-    btn.disabled = true; btn.textContent = `⏳ Chờ ${remaining}s...`;
-    setTimeout(updateImageBtn, 500);
-  } else { btn.disabled = false; btn.textContent = '🎨 Tạo Ảnh'; }
+    btn.disabled = true; 
+    btn.textContent = `⏳ Chờ ${remaining}s...`;
+    setTimeout(updateImageBtn, 1000);
+  } else { 
+    btn.disabled = false; 
+    btn.textContent = '🎨 Tạo Ảnh'; 
+  }
 }
 
 async function generateImage() {
   const prompt = $('img-prompt').value.trim();
-  if (!prompt) { showToast('Nhập mô tả trước đã!', 'error'); return; }
+  if (!prompt) { alert('Nhập mô tả trước đã!'); return; }
+  
   const perspective = $('img-perspective').value;
   const style = $('img-style').value;
-  const styleLock = `game asset, isolated on solid white background, high quality`;
+  // Tối ưu Prompt cho Game Asset
+  const styleLock = `game asset, clean solid white background, high quality, masterpiece, no text`;
   const fullPrompt = `${prompt}, ${perspective}, ${style}, ${styleLock}`;
   const seed = Math.floor(Math.random() * 1000000);
+  
+  // Thêm tham số nologo và model flux
   const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(fullPrompt)}?width=512&height=512&seed=${seed}&nologo=true&model=flux`;
   
-  imgCooldownUntil = Date.now() + 15000; updateImageBtn();
-  const preview = $('img-preview');
-  preview.innerHTML = '<div class="spinner"></div><div class="preview-empty">Đang tạo ảnh...</div>';
+  // Set cooldown 45s (giống giới hạn của Pollinations)
+  imgCooldownUntil = Date.now() + 45000; 
+  updateImageBtn();
   
-  const img = new Image(); img.crossOrigin = 'anonymous';
+  const preview = $('img-preview');
+  preview.innerHTML = '<div class="spinner"></div><div class="preview-empty">Đang tạo ảnh (có thể mất 10-30s)...</div>';
+  
+  const img = new Image(); 
+  img.crossOrigin = 'anonymous';
+  
   img.onload = () => {
-    preview.innerHTML = ''; img.style.maxWidth = '100%'; img.style.borderRadius = '8px'; preview.appendChild(img);
-    const btn = document.createElement('button'); btn.className = 'download'; btn.textContent = '📥 Tải ảnh';
+    // Kiểm tra xem có phải ảnh báo lỗi của Pollinations không (ảnh màu vàng)
+    if (img.width === 768 && img.height === 768 && img.src.includes('pollinations')) {
+        // Có thể là ảnh limit (hình vuông), ta cứ hiển thị để user biết
+    }
+    preview.innerHTML = ''; 
+    img.style.maxWidth = '100%'; 
+    img.style.borderRadius = '8px'; 
+    preview.appendChild(img);
+    
+    const btn = document.createElement('button'); 
+    btn.className = 'download'; 
+    btn.textContent = '📥 Tải ảnh'; 
     btn.onclick = () => { const a = document.createElement('a'); a.href = url; a.download = `asset-${Date.now()}.png`; a.click(); };
-    preview.appendChild(btn); showToast('Tạo ảnh thành công!', 'success');
+    preview.appendChild(btn); 
   };
-  img.onerror = () => { preview.innerHTML = '<div class="preview-empty" style="color:var(--accent-3)">❌ Lỗi API. Thử lại sau.</div>'; };
+  
+  img.onerror = () => { 
+    preview.innerHTML = '<div class="preview-empty" style="color:var(--accent-3)">❌ Lỗi API hoặc bị giới hạn. Thử lại sau 45s.</div>'; 
+  };
+  
   img.src = url;
 }
 $('img-generate').addEventListener('click', generateImage);
-updateImageBtn();
+updateImageBtn(); // Khởi tạo trạng thái nút
 
 // ============================================================
 // TAB 2: ANIMATION STUDIO
@@ -259,7 +277,7 @@ $('anim-file').addEventListener('change', function(e) {
 });
 
 $('anim-process').addEventListener('click', () => {
-  if (!origImg.src) { showToast('Vui lòng chọn ảnh!', 'error'); return; }
+  if (!origImg.src) { alert('Vui lòng chọn ảnh!'); return; }
   
   const frameCount = parseInt($('anim-frames').value);
   const tempCanvas = document.createElement('canvas');
@@ -299,7 +317,6 @@ $('anim-process').addEventListener('click', () => {
 
   $('anim-result').style.display = 'block';
   startAnimPreview();
-  showToast('Đã cắt Sprite Sheet!', 'success');
 });
 
 function startAnimPreview() {
@@ -334,7 +351,6 @@ $('anim-download').addEventListener('click', () => {
     const a = document.createElement('a'); a.href = url; a.download = `animation-${Date.now()}.gif`; a.click();
   });
   gif.render();
-  showToast('Đang xử lý file GIF...', 'success');
 });
 
 // ============================================================
